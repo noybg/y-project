@@ -3,12 +3,22 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
+
+    const logout = () => {
+        localStorage.removeItem('token')
+        window.location = '/'
+    }
     return (
         <header>
            <nav>
                <ul>
-                   <li> <Link to="/">Login</Link></li> 
-                   <li> <Link to="/market-list">Market List</Link></li>
+                   
+                   {
+                        localStorage.getItem('token') && <>
+                        <li onClick={logout}>Logout</li>
+                        </>
+                   }
+                   
                </ul>
             </nav> 
         </header>

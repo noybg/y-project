@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import PageHeader from '../components/PageHeader';
 import {formValidationHandler} from '../utils/validate'
 
@@ -53,26 +53,7 @@ const SignInScreen = () => {
         } 
     }
 
-    const handleFormSubmit = (token) => {
-        // e.preventDefault();
-        // const token = 
-        // localStorage.setItem('token', 'Your Email: '+ email.value)
-
-        // if(token){
-        //     console.log('token exists');
-        // }else{
-        //     console.log('token is not found');
-        // }
-        // if(token){
-        //     console.log('token exists');
-        // }else{
-        //     console.log('token is not found');
-        // }
-    
-        console.log("Work! " + token);
-    
-      }
-    // if( getCurrentUser() ) return <Redirect to="/"/>
+    if( localStorage.getItem('token') ) return <Redirect to="/market-list"/>
 
     return (
         <div className='sign-in'>
@@ -82,13 +63,8 @@ const SignInScreen = () => {
                 className="sign-in__form"
                 onSubmit={ (e) =>  {
                     e.preventDefault()
-                    /// 
-                   const token = localStorage.setItem('token', 'Your Email: '+ email.value)
-
-                    handleFormSubmit(token)
-
-                    // console.log('work');
-                   
+                   localStorage.setItem('token', `Your Email: ${email.value}`)
+                   window.location = '/'
                 }}
                 autoComplete="off" noValidate
             >

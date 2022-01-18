@@ -1,105 +1,123 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios';
 import PageHeader from '../components/PageHeader';
-
+import MarketTable from '../components/MarketTable';
+import { Redirect } from 'react-router-dom'
 
 const MarketList = () => {
 
-    // const [password, setPassword] = useState({}) 
-    // const [marketList, setMarketList] = useState({});
+    const [lang, setLang] = useState('en');
+    const [ragion, setRagion] = useState('US');
+    const [marketListA, setMarketListA] = useState([]);
+    const [marketList, setMarketList] = useState([]);
+
+    const regionHandler = (e) => {
+        setRagion(e.target.value)
+    }
+    const langHandler = (e) => {
+        setLang(e.target.value)
+    }
 
     useEffect(() => {
 
-
-        //
-        // fetch('https://yfapi.net/v6/finance/quote/marketSummary?lang=en&region=US', {
-        //     method: 'Get', 
-        //     headers: {
-        //         'X-API-KEY': '9ToYdJcBJS8mb3uOGGCNw5q7OBoRG1lCsAuwh706',
-        //         'Content-Type': 'application/json'
-        //     },
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     const items = data.marketSummaryResponse.result
-        //     // console.log(data);
-        //     items.map((item , i) => {
-        //         console.log(item);
-        //     })
-        //     // return item
-        // } )
-        // .catch(error => console.error(error));
-
-        fetch('https://jsonplaceholder.typicode.com/users')
+        fetch(`https://yfapi.net/v6/finance/quote/marketSummary?lang=${lang}&region=${ragion}`, {
+            method: 'Get', 
+            headers: {
+                'X-API-KEY': 'a9Lpaks1B9aZGMgGLnUIA2C6NuhgKRsR8JcHNO6r',
+                'Content-Type': 'application/json'
+            },
+        })
         .then(response => response.json())
-        .then(data => data.map((elm, i) => {
+        .then(data => {
             
-            console.log(elm);
-        }));
+            if ( data.message !== 'Limit Exceeded') {
+                const items = data.marketSummaryResponse.result;
+                // console.log(items);
+                setMarketListA([items])
+                // items.map( item => {
+                //     (setMarketList([
+                //         ...marketList,
+                //         {
+                //             exchange: item.exchange,
+                //             exchangeTimezoneName: item.exchangeTimezoneName,
+                //             language: item.language,
+                //             market: item.market,
+                //             marketState: item.marketState
+                //         }
+                //     ]))
+                // });
+            }
+            
+        } )
+        .catch(error => console.error(error));
 
-    });
+    }, [lang , ragion] );
     
-    // if( ! getCurrentUser() ) return <Redirect to="/"/>
-    
+    if( ! localStorage.getItem('token') ) return <Redirect to="/"/>
+    console.log(marketListA);
     return (
-    
+
         <div className="market-list">
             
             <PageHeader>Market List Page</PageHeader>
 
-            <form
-                // className=""
-                // onSubmit={ (e) =>  {
-                //     e.preventDefault()
-                                       
-                // }}
-                // autoComplete="off" noValidate
-            >
-            <label>Choose lang</label>
-            <select name="" id="">
-                <option value="en">en</option>
-                <option value="fr">fr</option>
-                <option value="de">de</option>
-                <option value="it">it</option>
-                <option value="es">es</option>
-                <option value="zh">zh</option>
-            </select>
-            
-            <label>Choose ragion</label>
-            <select name="" id="">
-                <option value="US">US</option>
-                <option value="AU">AU</option>
-                <option value="CA">CA</option>
-                <option value="FR">FR</option>
-                <option value="DE">DE</option>
-                <option value="HK">HK</option>
-                <option value="IT">IT</option>
-                <option value="ES">ES</option>
-                <option value="GB">GB</option>
-                <option value="IN">IN</option>
-            </select>
+            <div className="selectors">
+                <div className="selector">
+                <label>Choose lang:</label>
+                <select name="" onChange={langHandler} id="">
+                    <option value="en">en</option>
+                    <option value="fr">fr</option>
+                    <option value="de">de</option>
+                    <option value="it">it</option>
+                    <option value="es">es</option>
+                    <option value="zh">zh</option>
+                </select>
+                </div>
+                
+                <div className="selector">
+                <label>Choose ragion:</label> 
+                <select name="" onChange={regionHandler} id="">
+                    <option value="US">US</option>
+                    <option value="AU">AU</option>
+                    <option value="CA">CA</option>
+                    <option value="FR">FR</option>
+                    <option value="DE">DE</option>
+                    <option value="HK">HK</option>
+                    <option value="IT">IT</option>
+                    <option value="ES">ES</option>
+                    <option value="GB">GB</option>
+                    <option value="IN">IN</option>
+                </select>
+                </div>
+            </div>
 
-            {/* <button className="submit" type="submit" disabled={password.isValid && email.isValid ? false : true }>Sign In</button> */}
-
-            </form>
-
+            <div className="contain-table">
             <table className="customers">
                 <thead>
-                    <tr>
-                        <th>Company</th>
-                        <th>Contact</th>
-                        <th>Country</th>
-                    </tr>
+                        <tr>
+                            <th>Exchange</th>
+                            <th>Exchange Timezone Name</th>
+                            <th>Language</th>
+                            <th>Market</th>
+                            <th>Market State</th>
+                        </tr>
                 </thead>
-
-                <tbody>
-                    <tr>
-                        <td>ddd</td>
-                        <td>Maria Anders</td>
-                        <td>Germany</td>
-                    </tr>
-                </tbody>
+                {
+                    // marketList.map( (m, i) => (
+                        <MarketTable
+                            // key={i}
+                            // exchange={m.exchange}
+                            // exchangeTimezoneName={m.exchangeTimezoneName}
+                            // language={m.language}
+                            // market={m.market}
+                            // marketState={m.marketState}
+                        />
+                    // ) )
+                }
+                
             </table>
+            </div>
+
+
         </div>
     )
 }
